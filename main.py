@@ -8,10 +8,13 @@ add_parser = subparsers.add_parser('add', help='Add a new task')
 list_parser = subparsers.add_parser('list', help='List all tasks')
 done_parser = subparsers.add_parser('done', help='Mark task as done')
 delete_parser = subparsers.add_parser('delete', help='Delete a task')
+update_parser = subparsers.add_parser('update', help='Update a task')
 
 add_parser.add_argument('task', type=str, help='The task description')
 done_parser.add_argument('index', type=int, help='Task number to mark as done')
 delete_parser.add_argument('index', type=int, help='Task number to delete')
+update_parser.add_argument('index', type=int, help='Task number to update')
+update_parser.add_argument('new_title', type=str, help='New task title')
 
 args = parser.parse_args()
 command = args.command
@@ -124,6 +127,40 @@ def delete_task(task_number):
   else:
     print('Invalid task number.')
 
+def update_task(task_number, new_title):
+  # Open Folder and read tasks
+  try: 
+    with open('tasks.json', 'r')as f:
+      curr_tasks = json.load(f)
+  except (json.JSONDecodeError, FileNotFoundError):
+    curr_tasks = []
+
+  # Return if no tasks
+  if not curr_tasks:
+    print('No tasks available')
+    return
+
+  # Validate task number
+  if 0 < task_number <= len(curr_tasks):
+    task = curr_tasks[task_number - 1]
+
+    print(f"Current task: {task['title']}")
+    print(f"New title: {new_title}")
+    # Confirmation before updating
+    confirm = input("Confirm update? (Y/n): ").lower()
+
+    if confirm == "y":
+      task['title'] = new_title
+
+      with open('tasks.json', 'w') as f:
+        json.dump(curr_tasks, f, indent=2)
+
+      print(f'Task {task_number} updated succesfully.')
+    else:
+      print('Operation cancelled.')
+  else:
+    print('Invalid task number.')
+
 if not args.command:
     parser.print_help()
 
@@ -139,3 +176,6 @@ elif command == 'done':
 
 elif command == 'delete':
   delete_task(args.index)
+
+elif command == 'update':
+  update_task(args.index, args.new_title)
