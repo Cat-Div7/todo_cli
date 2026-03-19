@@ -87,6 +87,41 @@ def mark_done(task_number):
   else:
     print('Invalid task number.')
 
+def delete_task(task_number):
+  # Open Folder and read tasks
+  try: 
+    with open('tasks.json', 'r')as f:
+      curr_tasks = json.load(f)
+  except (json.JSONDecodeError, FileNotFoundError):
+    curr_tasks = []
+
+  # Return if no tasks
+  if not curr_tasks:
+    print('No tasks available')
+    return
+
+  # Validate task number
+  if 0 < task_number <= len(curr_tasks):
+    task = curr_tasks[task_number - 1]
+
+    print('The task you want to delete is:')
+    print(f"{task['title']}")
+
+    # Confirmation before deleting
+    confirm = input("Confirm Deleting? (Y/n): ").lower()
+
+    if confirm == "y":
+      curr_tasks.pop(task_number - 1)
+
+      with open('tasks.json', 'w') as f:
+        json.dump(curr_tasks, f, indent=2)
+
+      print(f'Task {task_number} deleted succesfully.')
+    else:
+      print('Operation cancelled.')
+  else:
+    print('Invalid task number.')
+
 if not args.command:
     parser.print_help()
 
