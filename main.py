@@ -5,9 +5,11 @@ parser = argparse.ArgumentParser(description='Todo CLI')
 subparsers = parser.add_subparsers(dest='command')
 
 add_parser = subparsers.add_parser('add', help='Add a new task')
+list_parser = subparsers.add_parser('list', help='List all tasks')
+done_parser = subparsers.add_parser('done', help='Mark task as done')
 
 add_parser.add_argument('task', type=str, help='The task description')
-list_parser = subparsers.add_parser('list', help='List all tasks')
+done_parser.add_argument('index', type=int, help='Task number to mark as done')
 
 args = parser.parse_args()
 command = args.command
@@ -45,12 +47,48 @@ def list_tasks():
     status = 'Done' if task['done'] else 'Not Done'
     print(f"[{idx}] {task['title']} - {status}")
 
+def mark_done(task_number):
+  # Open Folder and read tasks
+  try: 
+    with open('tasks.json', 'r')as f:
+      curr_tasks = json.load(f)
+  except (json.JSONDecodeError, FileNotFoundError):
+    curr_tasks = []
+
+  # Return if no tasks
+  if not curr_tasks:
+    print('No tasks available')
+    return
+
+  # Validate task number
+  if 0 < task_number <= len(curr_tasks):
+    print('The task you want to mark as done is:')
+    print(f"{curr_tasks[task_number - 1]['title']}")
+
+    # Confirmation before marking as done
+    confirm = input("Confirm? (Y/n): ").lower()
+
+    if confirm == "y":
+      curr_tasks[task_number - 1]['done'] = True
+
+      with open('tasks.json', 'w') as f:
+        json.dump(curr_tasks, f, indent=2)
+
+      print(f'Task {task_number} marked as done.')
+    else:
+      print('Operation cancelled.')
+  else:
+    print('Invalid task number.')
+
 if not args.command:
     parser.print_help()
 
-if command == 'add':
+elif command == 'add':
   add_task(args.task)
   print('Task Added')
 
 elif command == 'list':
   list_tasks()
+
+elif command == 'done':
+  mark_done(args.index)
