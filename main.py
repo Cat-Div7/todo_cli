@@ -62,14 +62,21 @@ def mark_done(task_number):
 
   # Validate task number
   if 0 < task_number <= len(curr_tasks):
+    task = curr_tasks[task_number - 1]
+    
+    # Check if task is already done
+    if task['done']:
+      print(f"Task {task_number} is already done ✔")
+      return
+
     print('The task you want to mark as done is:')
-    print(f"{curr_tasks[task_number - 1]['title']}")
+    print(f"{task['title']}")
 
     # Confirmation before marking as done
     confirm = input("Confirm? (Y/n): ").lower()
 
     if confirm == "y":
-      curr_tasks[task_number - 1]['done'] = True
+      task['done'] = True
 
       with open('tasks.json', 'w') as f:
         json.dump(curr_tasks, f, indent=2)
