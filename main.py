@@ -7,9 +7,11 @@ subparsers = parser.add_subparsers(dest='command')
 add_parser = subparsers.add_parser('add', help='Add a new task')
 list_parser = subparsers.add_parser('list', help='List all tasks')
 done_parser = subparsers.add_parser('done', help='Mark task as done')
+delete_parser = subparsers.add_parser('delete', help='Delete a task')
 
 add_parser.add_argument('task', type=str, help='The task description')
 done_parser.add_argument('index', type=int, help='Task number to mark as done')
+delete_parser.add_argument('index', type=int, help='Task number to delete')
 
 args = parser.parse_args()
 command = args.command
@@ -134,3 +136,6 @@ elif command == 'list':
 
 elif command == 'done':
   mark_done(args.index)
+
+elif command == 'delete':
+  delete_task(args.index)
