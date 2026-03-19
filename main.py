@@ -2,14 +2,15 @@ import argparse
 import json 
 
 parser = argparse.ArgumentParser(description='Todo CLI')
+subparsers = parser.add_subparsers(dest='command')
 
-parser.add_argument('command')
-parser.add_argument('task', nargs='?')
+add_parser = subparsers.add_parser('add', help='Add a new task')
+
+add_parser.add_argument('task', type=str, help='The task description')
+list_parser = subparsers.add_parser('list', help='List all tasks')
 
 args = parser.parse_args()
-
 command = args.command
-task = args.task
 
 def add_task(task):
   # Read existing tasks
@@ -20,11 +21,10 @@ def add_task(task):
     curr_tasks = []
 
   # Append new task
-  curr_tasks.append({"Title": task, "done": False})
+  curr_tasks.append({"title": task, "done": False})
   # Write the updated tasks back to the file
   with open('tasks.json', 'w') as f:
     json.dump(curr_tasks, f, indent=2)
-    print('Task Added')
 
 def list_tasks():
   # Open Folder and read tasks
@@ -43,9 +43,14 @@ def list_tasks():
   print("Your Tasks:")
   for idx, task in enumerate(curr_tasks, start=1):
     status = 'Done' if task['done'] else 'Not Done'
-    print(f"[{idx}] {task['Title']} - {status}")
+    print(f"[{idx}] {task['title']} - {status}")
+
+if not args.command:
+    parser.print_help()
 
 if command == 'add':
-  add_task(task)
+  add_task(args.task)
+  print('Task Added')
+
 elif command == 'list':
   list_tasks()

@@ -1,6 +1,10 @@
 [
   {
-    "Title": "Dummy Data",
+    "title": "Dummy Data",
+    "done": false
+  },
+  {
+    "title": "Nigga",
     "done": false
   }
 ]
