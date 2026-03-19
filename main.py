@@ -16,9 +16,7 @@ def add_task(task):
   try:
     with open('tasks.json', 'r') as f:
       curr_tasks = json.load(f)
-  except json.JSONDecodeError:
-    curr_tasks = []
-  except FileNotFoundError:
+  except (json.JSONDecodeError, FileNotFoundError):
     curr_tasks = []
 
   # Append new task
