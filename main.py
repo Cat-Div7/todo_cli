@@ -11,6 +11,7 @@ delete_parser = subparsers.add_parser('delete', help='Delete a task')
 update_parser = subparsers.add_parser('update', help='Update a task')
 
 add_parser.add_argument('task', type=str, help='The task description')
+add_parser.add_argument('-p', '--priority', type=str, choices=['high', 'medium', 'low'], default='medium' ,help='Task priority (high, medium, low)')
 done_parser.add_argument('index', type=int, help='Task number to mark as done')
 delete_parser.add_argument('index', type=int, help='Task number to delete')
 update_parser.add_argument('index', type=int, help='Task number to update')
@@ -19,7 +20,7 @@ update_parser.add_argument('new_title', type=str, help='New task title')
 args = parser.parse_args()
 command = args.command
 
-def add_task(task):
+def add_task(task, priority):
   # Read existing tasks
   try:
     with open('tasks.json', 'r') as f:
@@ -28,7 +29,7 @@ def add_task(task):
     curr_tasks = []
 
   # Append new task
-  curr_tasks.append({"title": task, "done": False})
+  curr_tasks.append({"title": task, "done": False, "priority": priority})
   # Write the updated tasks back to the file
   with open('tasks.json', 'w') as f:
     json.dump(curr_tasks, f, indent=2)
@@ -165,7 +166,7 @@ if not args.command:
     parser.print_help()
 
 elif command == 'add':
-  add_task(args.task)
+  add_task(args.task, args.priority)
   print('Task Added')
 
 elif command == 'list':

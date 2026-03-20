@@ -1,10 +1,12 @@
 [
   {
     "title": "Dummy Data",
-    "done": false
+    "done": false,
+    "priority": "meduim"
   },
   {
     "title": ":)",
-    "done": false
+    "done": false,
+    "priority": "meduim"
   }
 ]
