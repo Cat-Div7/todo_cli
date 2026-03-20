@@ -51,7 +51,8 @@ def list_tasks():
   print("Your Tasks:")
   for idx, task in enumerate(curr_tasks, start=1):
     status = 'Done' if task['done'] else 'Not Done'
-    print(f"[{idx}] {task['title']} - {status}")
+    priority = task['priority'].upper()
+    print(f"[{idx}] ({priority}) {task['title']} - {status}")
 
 def mark_done(task_number):
   # Open Folder and read tasks
