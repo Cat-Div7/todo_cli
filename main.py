@@ -12,6 +12,7 @@ update_parser = subparsers.add_parser('update', help='Update a task')
 
 add_parser.add_argument('task', type=str, help='The task description')
 add_parser.add_argument('-p', '--priority', type=str, choices=['high', 'medium', 'low'], default='medium' ,help='Task priority (high, medium, low)')
+list_parser.add_argument('-p', '--priority', type=str, choices=['high', 'medium', 'low'],help='Filter tasks by priority')
 done_parser.add_argument('index', type=int, help='Task number to mark as done')
 delete_parser.add_argument('index', type=int, help='Task number to delete')
 update_parser.add_argument('index', type=int, help='Task number to update')
@@ -34,13 +35,23 @@ def add_task(task, priority):
   with open('tasks.json', 'w') as f:
     json.dump(curr_tasks, f, indent=2)
 
-def list_tasks():
+def list_tasks(filter_priority=None):
   # Open Folder and read tasks
   try:
     with open('tasks.json', 'r') as f:
       curr_tasks = json.load(f)
   except (json.JSONDecodeError, FileNotFoundError):
     curr_tasks = []
+
+  # Filter priority
+  if filter_priority:
+    curr_tasks = [
+      task for task in curr_tasks
+      if task['priority'] == filter_priority
+    ]
+    if not curr_tasks:
+      print('No tasks match this priority')
+      return
 
   # Return if no tasks
   if not curr_tasks:
@@ -171,7 +182,7 @@ elif command == 'add':
   print('Task Added')
 
 elif command == 'list':
-  list_tasks()
+  list_tasks(args.priority)
 
 elif command == 'done':
   mark_done(args.index)
