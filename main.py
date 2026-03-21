@@ -21,27 +21,28 @@ update_parser.add_argument('new_title', type=str, help='New task title')
 args = parser.parse_args()
 command = args.command
 
+def load_tasks():
+  try:
+    with open('tasks.json', 'r') as f:
+      return json.load(f)
+  except (json.JSONDecodeError, FileNotFoundError):
+    return []
+
+def save_tasks(tasks):
+  with open('tasks.json' 'w') as f:
+    json.dump(tasks, f, indent=2)
+
 def add_task(task, priority):
   # Read existing tasks
-  try:
-    with open('tasks.json', 'r') as f:
-      curr_tasks = json.load(f)
-  except (json.JSONDecodeError, FileNotFoundError):
-    curr_tasks = []
-
+  curr_tasks = load_tasks()
   # Append new task
   curr_tasks.append({"title": task, "done": False, "priority": priority})
-  # Write the updated tasks back to the file
-  with open('tasks.json', 'w') as f:
-    json.dump(curr_tasks, f, indent=2)
+  # Write the updated tasks
+  save_tasks(curr_tasks)
 
 def list_tasks(filter_priority=None):
-  # Open Folder and read tasks
-  try:
-    with open('tasks.json', 'r') as f:
-      curr_tasks = json.load(f)
-  except (json.JSONDecodeError, FileNotFoundError):
-    curr_tasks = []
+  # Read existing tasks
+  curr_tasks = load_tasks()
 
   # Filter priority
   if filter_priority:
@@ -66,12 +67,8 @@ def list_tasks(filter_priority=None):
     print(f"[{idx}] ({priority}) {task['title']} - {status}")
 
 def mark_done(task_number):
-  # Open Folder and read tasks
-  try: 
-    with open('tasks.json', 'r')as f:
-      curr_tasks = json.load(f)
-  except (json.JSONDecodeError, FileNotFoundError):
-    curr_tasks = []
+  # Read existing tasks
+  curr_tasks = load_tasks()
 
   # Return if no tasks
   if not curr_tasks:
@@ -96,8 +93,8 @@ def mark_done(task_number):
     if confirm == "y":
       task['done'] = True
 
-      with open('tasks.json', 'w') as f:
-        json.dump(curr_tasks, f, indent=2)
+      # Write the updated tasks
+      save_tasks(curr_tasks)
 
       print(f'Task {task_number} marked as done.')
     else:
@@ -106,12 +103,8 @@ def mark_done(task_number):
     print('Invalid task number.')
 
 def delete_task(task_number):
-  # Open Folder and read tasks
-  try: 
-    with open('tasks.json', 'r')as f:
-      curr_tasks = json.load(f)
-  except (json.JSONDecodeError, FileNotFoundError):
-    curr_tasks = []
+  # Read existing tasks
+  curr_tasks = load_tasks()
 
   # Return if no tasks
   if not curr_tasks:
@@ -131,8 +124,8 @@ def delete_task(task_number):
     if confirm == "y":
       curr_tasks.pop(task_number - 1)
 
-      with open('tasks.json', 'w') as f:
-        json.dump(curr_tasks, f, indent=2)
+      # Write the updated tasks
+      save_tasks(curr_tasks)
 
       print(f'Task {task_number} deleted succesfully.')
     else:
@@ -141,12 +134,8 @@ def delete_task(task_number):
     print('Invalid task number.')
 
 def update_task(task_number, new_title):
-  # Open Folder and read tasks
-  try: 
-    with open('tasks.json', 'r')as f:
-      curr_tasks = json.load(f)
-  except (json.JSONDecodeError, FileNotFoundError):
-    curr_tasks = []
+  # Read existing tasks
+  curr_tasks = load_tasks()
 
   # Return if no tasks
   if not curr_tasks:
@@ -165,8 +154,8 @@ def update_task(task_number, new_title):
     if confirm == "y":
       task['title'] = new_title
 
-      with open('tasks.json', 'w') as f:
-        json.dump(curr_tasks, f, indent=2)
+      # Write the updated tasks
+      save_tasks(curr_tasks)
 
       print(f'Task {task_number} updated succesfully.')
     else:
