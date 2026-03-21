@@ -1,6 +1,8 @@
 import argparse
 import json 
 
+FILE_NAME = 'tasks.json'
+
 parser = argparse.ArgumentParser(description='Todo CLI')
 subparsers = parser.add_subparsers(dest='command')
 
@@ -23,13 +25,13 @@ command = args.command
 
 def load_tasks():
   try:
-    with open('tasks.json', 'r') as f:
+    with open(FILE_NAME, 'r') as f:
       return json.load(f)
   except (json.JSONDecodeError, FileNotFoundError):
     return []
 
 def save_tasks(tasks):
-  with open('tasks.json' 'w') as f:
+  with open(FILE_NAME, 'w') as f:
     json.dump(tasks, f, indent=2)
 
 def add_task(task, priority):
